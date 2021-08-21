@@ -9,15 +9,15 @@ import java.util.List;
 
 public interface PortalService {
 
-    Article addNewArticle(ArticleModel article);
+    Article addNewArticle(ArticleModel article, String username);
 
     Article getArticleById(Long articleId);
 
     List<Article> getAllArticles();
 
-    void deleteArticleById(Long Id);
+    void deleteArticleById(Long Id, String username);
 
-    Article addNewArticleComment(Long articleId, CommentModel text);
+    Comment addNewArticleComment(Long articleId, CommentModel text, String username);
 
     List<Comment> getArticleComments(Long articleId);
 

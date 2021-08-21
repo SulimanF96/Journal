@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,13 +25,15 @@ public class PortalController {
     // USER
     @PostMapping("/article")
     @PreAuthorize("hasAnyAuthority('USER')")
-    public Article addNewArticle(@RequestBody ArticleDto article){
-      return portalService.addNewArticle(new ArticleModel(article.getTitle(), article.getBody()));
+    public Article addNewArticle(@RequestBody ArticleDto article, Principal principal){
+      return portalService.addNewArticle(new ArticleModel(article.getTitle(), article.getBody()), principal.getName());
     }
+
 
     // Everyone
     @GetMapping("/article")
     @PreAuthorize("permitAll()")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public List<Article> getAllArticles(){
         return portalService.getAllArticles();
     }
@@ -39,6 +42,7 @@ public class PortalController {
     // eeveryone
     @GetMapping("/article/{articleId}")
     @PreAuthorize("permitAll()")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
     public Article getArticleById(@PathVariable long articleId){
         return portalService.getArticleById(articleId);
     }
@@ -47,8 +51,8 @@ public class PortalController {
     // USer delete his own article
     @DeleteMapping("/article/{articleId}")
     @PreAuthorize("hasAnyAuthority('USER')")
-    public String deleteArticleById(@PathVariable Long articleId){
-        portalService.deleteArticleById(articleId);
+    public String deleteArticleById(@PathVariable Long articleId, Principal principal){
+        portalService.deleteArticleById(articleId, principal.getName());
         return articleId + "was deleted";
     }
 
@@ -82,18 +86,18 @@ public class PortalController {
         return portalService.enableArticle(articleId);
     }
 
-  /*  @PostMapping("/article/{articleId}/comment")
-    public Article addNewArticleComment(@PathVariable Long articleId, @RequestBody CommentDto comment){
-        return portalService.addNewArticleComment(articleId, new CommentModel(comment.getText()));
-    }*/
-
-    /*
-    @GetMapping("/article/{articleId}/commnet")
-    public List<Comment> getArticleCommentById(@PathVariable Long articleId){
-        return new ArrayList<Comment>();
+    @PostMapping("/article/{articleId}/comment")
+    @PreAuthorize("hasAnyAuthority('USER')")
+    public Comment addNewArticleComment(@PathVariable Long articleId, @RequestBody CommentDto comment, Principal principal){
+        return portalService.addNewArticleComment(articleId, new CommentModel(comment.getText()), principal.getName());
     }
 
+    @GetMapping("/article/{articleId}/comment")
+    @PreAuthorize("permitAll()")
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    public List<Comment> getArticleCommentById(@PathVariable Long articleId){
+        return portalService.getArticleComments(articleId);
+    }
 
-*/
 
 }

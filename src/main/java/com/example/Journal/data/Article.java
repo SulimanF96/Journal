@@ -9,7 +9,7 @@ public class Article {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long articleId;
+    private Long id;
 
     @Column(length = 100, nullable = false)
     private String title;
@@ -32,11 +32,9 @@ public class Article {
     @Column(nullable = false)
     private Boolean disabled;
 
-    @OneToMany
-    private List<Comment> comments;
 
-    public Article(Long id, String title, String body, String author, Date createdAt, Integer likes, Integer dislikes, Boolean disabled, List<Comment> comments) {
-        this.articleId = id;
+    public Article(Long id, String title, String body, String author, Date createdAt, Integer likes, Integer dislikes, Boolean disabled) {
+        this.id = id;
         this.title = title;
         this.body = body;
         this.author = author;
@@ -44,10 +42,9 @@ public class Article {
         this.likes = likes;
         this.dislikes = dislikes;
         this.disabled = disabled;
-        this.comments = comments;
     }
 
-    public Article( String title, String body, String author, Date createdAt, Integer likes, Integer dislikes, Boolean disabled, List<Comment> comments) {
+    public Article( String title, String body, String author, Date createdAt, Integer likes, Integer dislikes, Boolean disabled) {
         this.title = title;
         this.body = body;
         this.author = author;
@@ -55,19 +52,18 @@ public class Article {
         this.likes = likes;
         this.dislikes = dislikes;
         this.disabled = disabled;
-        this.comments = comments;
     }
 
     public Article( ){
 
     }
 
-    public Long getArticleId() {
-        return articleId;
+    public Long getId() {
+        return this.id;
     }
 
-    public void setArticleId(Long articleId) {
-        this.articleId = articleId;
+    public void setId(Long articleId) {
+        this.id = articleId;
     }
 
     public String getTitle() {
@@ -126,11 +122,4 @@ public class Article {
         this.disabled = disabled;
     }
 
-    public List<Comment> getComments() {
-        return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
-    }
 }

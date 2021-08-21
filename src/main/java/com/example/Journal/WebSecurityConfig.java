@@ -11,6 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 
 
 @Configuration
@@ -45,7 +46,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .httpBasic().and().formLogin().and().logout();  */
 
-        http.csrf().disable().authorizeRequests().antMatchers("/user").permitAll().anyRequest().authenticated()
+        http.csrf().disable().authorizeRequests().antMatchers("/user").permitAll().antMatchers("/article").permitAll().anyRequest().authenticated()
                 .and()
                 .httpBasic().and().formLogin().and().logout();
     }
@@ -56,4 +57,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .ignoring()
                 .antMatchers("/h2-console/**");
     }
+
+
 }

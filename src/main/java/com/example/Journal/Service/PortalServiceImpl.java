@@ -9,9 +9,11 @@ import com.example.Journal.data.CommentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -33,8 +35,8 @@ public class PortalServiceImpl implements PortalService {
     }
 
     @Override
-    public Article addNewArticle(ArticleModel article) {
-        Article newArticle = new Article(article.getTitle(), article.getBody(), "Suliman", new Date(), 0, 0, false, new ArrayList<>());
+    public Article addNewArticle(ArticleModel article, String username) {
+        Article newArticle = new Article(article.getTitle(), article.getBody(), username, new Date(), 0, 0, false);
         articleRepository.save(newArticle);
         return articleRepository.save(newArticle);
     }
@@ -42,77 +44,83 @@ public class PortalServiceImpl implements PortalService {
     @Override
     public Article getArticleById(Long articleId) {
         Article article = articleRepository.getById(articleId);
-        return new Article(article.getArticleId(), article.getTitle(), article.getBody(), article.getAuthor(), article.getCreatedAt(), article.getLikes(), article.getDislikes(), article.getDisabled(), article.getComments());
+        return new Article(article.getId(), article.getTitle(), article.getBody(), article.getAuthor(), article.getCreatedAt(), article.getLikes(), article.getDislikes(), article.getDisabled());
     }
 
     @Override
     public List<Article> getAllArticles() {
         List<Article> articles= articleRepository.findAll().stream().map((article) ->
                 new Article(
-                        article.getArticleId(),
+                        article.getId(),
                         article.getTitle(),
                         article.getBody(),
                         article.getAuthor(),
                         article.getCreatedAt(),
                         article.getLikes(),
                         article.getDislikes(),
-                        article.getDisabled(),
-                        article.getComments())).filter(article -> !article.getDisabled()).collect(Collectors.toList());
+                        article.getDisabled())).filter(article -> !article.getDisabled()).collect(Collectors.toList());
         return articles;
     }
 
     @Override
-    public void deleteArticleById(Long articleId) {
-        Article article = articleRepository.findByArticleId(articleId);
-        articleRepository.delete(article);
-    }
-
-    @Override
-    public Article addNewArticleComment(Long articleId, CommentModel newComment) {
-        Comment comment = commentRepository.save(new Comment(newComment.getText(), new Date(), "Suliman" ));
-        Article article = articleRepository.findByArticleId(articleId);
-        List<Comment>  comments = new ArrayList<>(article.getComments());
-        comments.add(comment);
-        article.setComments(comments);
-        return articleRepository.save(article);
-    }
-
-    @Override
     public List<Comment> getArticleComments(Long articleId) {
-        return null;
+        List<Comment> comments= commentRepository.findByArticleId(articleId).stream().map((comment) ->
+                new Comment(
+                        comment.getId(),
+                        comment.getText(),
+                        comment.getCreatedAt(),
+                        comment.getUser())).collect(Collectors.toList());
+        return comments;
     }
 
     @Override
-    public Article addOneLikeToArticle(Long ArticleId) {
-        Article article = articleRepository.findByArticleId(ArticleId);
-        article.setLikes(article.getLikes() + 1);
-        return articleRepository.save(article);
+    public void deleteArticleById(Long articleId, String username) {
+        Optional<Article> article = articleRepository.findById(articleId);
+        if(article.get().getAuthor() == username){
+            articleRepository.delete(article.get());
+        }
+    }
+
+    @Override
+    public Comment addNewArticleComment(Long articleId, CommentModel newComment, String username) {
+        Comment comment = new Comment(newComment.getText(), new Date(), username );
+        Optional<Article> article = articleRepository.findById(articleId);
+        comment.setArticle(article.get());
+        return commentRepository.save(comment);
+    }
+
+
+    @Override
+    public Article addOneLikeToArticle(Long articleId) {
+        Optional<Article> article = articleRepository.findById(articleId);
+        article.get().setLikes(article.get().getLikes() + 1);
+        return articleRepository.save(article.get());
     }
 
     @Override
     public Article addOneDislikeToArticle(Long articleId) {
-        Article article = articleRepository.findByArticleId(articleId);
-        if(article.getLikes() > 0){
-            article.setLikes(article.getLikes() - 1);
+        Optional<Article> article = articleRepository.findById(articleId);
+        if(article.get().getDislikes() > 0){
+            article.get().setDislikes(article.get().getDislikes() - 1);
         }
-        return articleRepository.save(article);
+        return articleRepository.save(article.get());
     }
 
     @Override
     public Article disableArticle(Long articleId) {
-        Article article = articleRepository.findByArticleId(articleId);
-        if(!article.getDisabled()){
-            article.setDisabled(true);
+        Optional<Article> article = articleRepository.findById(articleId);
+        if(!article.get().getDisabled()){
+            article.get().setDisabled(true);
         }
-        return articleRepository.save(article);
+        return articleRepository.save(article.get());
     }
 
     @Override
     public Article enableArticle(Long articleId) {
-        Article article = articleRepository.findByArticleId(articleId);
-        if(article.getDisabled()){
-            article.setDisabled(false);
+        Optional<Article> article = articleRepository.findById(articleId);
+        if(article.get().getDisabled()){
+            article.get().setDisabled(false);
         }
-        return articleRepository.save(article);
+        return articleRepository.save(article.get());
     }
 }

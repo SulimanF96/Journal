@@ -1,5 +1,9 @@
 package com.example.Journal.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import javax.persistence.*;
 import java.util.Date;
 
@@ -20,6 +24,15 @@ public class Comment {
     @Column(nullable = false)
     private String user;
 
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "article_id", nullable = false)
+    private Article article;
+
+    public Comment() {
+
+    }
+
     public Comment(String text, Date createdAt, String user) {
         this.text = text;
         this.createdAt = createdAt;
@@ -34,7 +47,7 @@ public class Comment {
     }
 
     public Long getId() {
-        return this.id;
+        return id;
     }
 
     public void setId(Long id) {
@@ -42,7 +55,7 @@ public class Comment {
     }
 
     public String getText() {
-        return this.text;
+        return text;
     }
 
     public void setText(String text) {
@@ -63,5 +76,13 @@ public class Comment {
 
     public void setUser(String user) {
         this.user = user;
+    }
+
+    public Article getArticle() {
+        return article;
+    }
+
+    public void setArticle(Article article) {
+        this.article = article;
     }
 }
