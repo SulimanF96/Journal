@@ -1,7 +1,7 @@
 package com.example.Journal.Service;
 
+import com.example.Journal.Controller.DTO.UserDto;
 import com.example.Journal.Model.PrivilegeModel;
-import com.example.Journal.Model.UserModel;
 import com.example.Journal.data.Privilege;
 import com.example.Journal.data.PrivilegeRepository;
 import com.example.Journal.data.User;
@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User saveUser(UserModel user) {
+    public User saveUser(UserDto user) {
         User newUser = new User();
         newUser.setUsername(user.getUsername());
         newUser.setMobileNumber(user.getMobileNumber());

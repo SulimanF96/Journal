@@ -1,7 +1,9 @@
 package com.example.Journal.Service;
 
-import com.example.Journal.Model.ArticleModel;
-import com.example.Journal.Model.CommentModel;
+import com.example.Journal.Controller.DTO.ArticleDto;
+import com.example.Journal.Controller.DTO.CommentDto;
+import com.example.Journal.Exception.InputFieldException;
+import com.example.Journal.Exception.NotAllowedForThisUserExeption;
 import com.example.Journal.data.Article;
 import com.example.Journal.data.ArticleRepository;
 import com.example.Journal.data.Comment;
@@ -35,7 +37,7 @@ public class PortalServiceImpl implements PortalService {
     }
 
     @Override
-    public Article addNewArticle(ArticleModel article, String username) {
+    public Article addNewArticle(ArticleDto article, String username) {
         Article newArticle = new Article(article.getTitle(), article.getBody(), username, new Date(), 0, 0, false);
         articleRepository.save(newArticle);
         return articleRepository.save(newArticle);
@@ -74,15 +76,17 @@ public class PortalServiceImpl implements PortalService {
     }
 
     @Override
-    public void deleteArticleById(Long articleId, String username) {
+    public void deleteArticleById(Long articleId, String username) throws NotAllowedForThisUserExeption {
         Optional<Article> article = articleRepository.findById(articleId);
         if(article.get().getAuthor() == username){
             articleRepository.delete(article.get());
+        } else {
+            throw new NotAllowedForThisUserExeption("Only the author of this article can delete it");
         }
     }
 
     @Override
-    public Comment addNewArticleComment(Long articleId, CommentModel newComment, String username) {
+    public Comment addNewArticleComment(Long articleId, CommentDto newComment, String username) {
         Comment comment = new Comment(newComment.getText(), new Date(), username );
         Optional<Article> article = articleRepository.findById(articleId);
         comment.setArticle(article.get());

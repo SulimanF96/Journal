@@ -1,7 +1,6 @@
 package com.example.Journal.Controller;
 
 import com.example.Journal.Controller.DTO.UserDto;
-import com.example.Journal.Model.UserModel;
 import com.example.Journal.Service.UserService;
 import com.example.Journal.data.User;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ public class UserRestController {
     @ResponseStatus(HttpStatus.OK)
     @PreAuthorize("permitAll()")
     public User registerUser(@RequestBody UserDto user){
-        return userService.saveUser(new UserModel(user.getUsername(), user.getMobileNumber(), user.getPassword(), user.getEmail()));
+        return userService.saveUser(user);
     }
 
     // User , Admin

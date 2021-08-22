@@ -2,12 +2,12 @@ package com.example.Journal.Controller;
 
 import com.example.Journal.Controller.DTO.ArticleDto;
 import com.example.Journal.Controller.DTO.CommentDto;
-import com.example.Journal.Model.ArticleModel;
-import com.example.Journal.Model.CommentModel;
 import com.example.Journal.Service.PortalService;
 import com.example.Journal.data.Article;
 import com.example.Journal.data.Comment;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,8 +27,8 @@ public class PortalController {
     @PostMapping("/article")
     @PreAuthorize("hasAnyAuthority('USER')")
     @CrossOrigin(origins = "*", allowedHeaders = "*")
-    public Article addNewArticle(@Valid @RequestBody ArticleDto article, Principal principal){
-      return portalService.addNewArticle(new ArticleModel(article.getTitle(), article.getBody()), principal.getName());
+    public ResponseEntity<Article> addNewArticle(@Valid @RequestBody ArticleDto article, Principal principal){
+      return new ResponseEntity<Article>(portalService.addNewArticle(article, principal.getName()),HttpStatus.OK);
     }
 
 
@@ -36,8 +36,8 @@ public class PortalController {
     @GetMapping("/article")
     @PreAuthorize("permitAll()")
     @CrossOrigin(origins = "*", allowedHeaders = "*")
-    public List<Article> getAllArticles(){
-        return portalService.getAllArticles();
+    public ResponseEntity<List<Article>> getAllArticles(){
+        return new ResponseEntity<List<Article>>(portalService.getAllArticles(), HttpStatus.OK);
     }
 
 
@@ -45,60 +45,60 @@ public class PortalController {
     @GetMapping("/article/{articleId}")
     @PreAuthorize("permitAll()")
     @CrossOrigin(origins = "*", allowedHeaders = "*")
-    public Article getArticleById(@PathVariable long articleId){
-        return portalService.getArticleById(articleId);
+    public ResponseEntity<Article> getArticleById(@PathVariable long articleId){
+        return new ResponseEntity<Article>(portalService.getArticleById(articleId), HttpStatus.OK);
     }
 
 
     // USer delete his own article
     @DeleteMapping("/article/{articleId}")
     @PreAuthorize("hasAnyAuthority('USER')")
-    public String deleteArticleById(@PathVariable Long articleId, Principal principal){
+    public ResponseEntity<String> deleteArticleById(@PathVariable Long articleId, Principal principal){
         portalService.deleteArticleById(articleId, principal.getName());
-        return articleId + "was deleted";
+        return new ResponseEntity<String>("An Article with" + " " + articleId + " " + "was deleted", HttpStatus.OK);
     }
 
 
     // USewr
     @PutMapping("/article/{articleId}/like")
     @PreAuthorize("hasAnyAuthority('USER')")
-    public Article addOneLikeToArticle(@PathVariable Long articleId){
-        return portalService.addOneLikeToArticle(articleId);
+    public ResponseEntity<Article> addOneLikeToArticle(@PathVariable Long articleId){
+        return new ResponseEntity<Article>(portalService.addOneLikeToArticle(articleId), HttpStatus.OK);
     }
 
 
     // USewr
     @PutMapping("/article/{articleId}/dislike")
     @PreAuthorize("hasAnyAuthority('USER')")
-    public Article addOneDisLikeToArticle(@PathVariable Long articleId){
-        return portalService.addOneDislikeToArticle(articleId);
+    public ResponseEntity<Article> addOneDisLikeToArticle(@PathVariable Long articleId){
+        return new ResponseEntity<Article>(portalService.addOneDislikeToArticle(articleId), HttpStatus.OK);
     }
 
     // ADMIN
     @PutMapping("/article/{articleId}/disable")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public Article disableArticle(@PathVariable Long articleId){
-        return portalService.disableArticle(articleId);
+    public ResponseEntity<Article> disableArticle(@PathVariable Long articleId){
+        return new ResponseEntity<Article>(portalService.disableArticle(articleId), HttpStatus.OK);
     }
 
     // Admin
     @PutMapping("/article/{articleId}/enable")
     @PreAuthorize("hasAnyAuthority('ADMIN')")
-    public Article enableArticle(@PathVariable Long articleId){
-        return portalService.enableArticle(articleId);
+    public ResponseEntity<Article> enableArticle(@PathVariable Long articleId){
+        return new ResponseEntity<Article>(portalService.enableArticle(articleId), HttpStatus.OK);
     }
 
     @PostMapping("/article/{articleId}/comment")
     @PreAuthorize("hasAnyAuthority('USER')")
-    public Comment addNewArticleComment(@PathVariable Long articleId, @Valid @RequestBody CommentDto comment, Principal principal){
-        return portalService.addNewArticleComment(articleId, new CommentModel(comment.getText()), principal.getName());
+    public ResponseEntity<Comment> addNewArticleComment(@PathVariable Long articleId, @Valid @RequestBody CommentDto comment, Principal principal){
+        return new ResponseEntity<Comment>(portalService.addNewArticleComment(articleId, comment, principal.getName()), HttpStatus.OK);
     }
 
     @GetMapping("/article/{articleId}/comment")
     @PreAuthorize("permitAll()")
     @CrossOrigin(origins = "*", allowedHeaders = "*")
-    public List<Comment> getArticleCommentById(@PathVariable Long articleId){
-        return portalService.getArticleComments(articleId);
+    public ResponseEntity<List<Comment>> getArticleCommentById(@PathVariable Long articleId){
+        return new ResponseEntity<List<Comment>>(portalService.getArticleComments(articleId), HttpStatus.OK);
     }
 
 
