@@ -100,9 +100,7 @@ public class PortalServiceImpl implements PortalService {
     @Override
     public Article addOneDislikeToArticle(Long articleId) {
         Optional<Article> article = articleRepository.findById(articleId);
-        if(article.get().getDislikes() > 0){
-            article.get().setDislikes(article.get().getDislikes() - 1);
-        }
+        article.get().setDislikes(article.get().getDislikes() + 1);
         return articleRepository.save(article.get());
     }
 

@@ -1,19 +1,32 @@
 package com.example.Journal.data;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import java.util.Date;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
 public class Article {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @Size(min = 1, max = 99, message="title cannot be more than 99 characters")
     @Column(length = 100, nullable = false)
     private String title;
 
+
+    @Size(min = 1, max = 499, message="body cannot be more than 499 characters")
     @Column(length = 500, nullable = false)
     private String body;
 
@@ -51,74 +64,6 @@ public class Article {
         this.createdAt = createdAt;
         this.likes = likes;
         this.dislikes = dislikes;
-        this.disabled = disabled;
-    }
-
-    public Article( ){
-
-    }
-
-    public Long getId() {
-        return this.id;
-    }
-
-    public void setId(Long articleId) {
-        this.id = articleId;
-    }
-
-    public String getTitle() {
-        return this.title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getBody() {
-        return body;
-    }
-
-    public void setBody(String body) {
-        this.body = body;
-    }
-
-    public String getAuthor() {
-        return this.author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(Date createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public Integer getLikes() {
-        return likes;
-    }
-
-    public void setLikes(Integer likes) {
-        this.likes = likes;
-    }
-
-    public Integer getDislikes() {
-        return dislikes;
-    }
-
-    public void setDislikes(Integer dislikes) {
-        this.dislikes = dislikes;
-    }
-
-    public Boolean getDisabled() {
-        return disabled;
-    }
-
-    public void setDisabled(Boolean disabled) {
         this.disabled = disabled;
     }
 

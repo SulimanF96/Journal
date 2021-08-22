@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,7 +26,8 @@ public class PortalController {
     // USER
     @PostMapping("/article")
     @PreAuthorize("hasAnyAuthority('USER')")
-    public Article addNewArticle(@RequestBody ArticleDto article, Principal principal){
+    @CrossOrigin(origins = "*", allowedHeaders = "*")
+    public Article addNewArticle(@Valid @RequestBody ArticleDto article, Principal principal){
       return portalService.addNewArticle(new ArticleModel(article.getTitle(), article.getBody()), principal.getName());
     }
 
@@ -88,7 +90,7 @@ public class PortalController {
 
     @PostMapping("/article/{articleId}/comment")
     @PreAuthorize("hasAnyAuthority('USER')")
-    public Comment addNewArticleComment(@PathVariable Long articleId, @RequestBody CommentDto comment, Principal principal){
+    public Comment addNewArticleComment(@PathVariable Long articleId, @Valid @RequestBody CommentDto comment, Principal principal){
         return portalService.addNewArticleComment(articleId, new CommentModel(comment.getText()), principal.getName());
     }
 
